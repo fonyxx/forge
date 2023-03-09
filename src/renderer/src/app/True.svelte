@@ -35,7 +35,9 @@
 
     <div class="editor-area">
       <div class="tabs">
-
+        <div class="inner">
+          Hello
+        </div>
       </div>
 
       <div
@@ -57,6 +59,10 @@
       <section class="left">
         <div class={"nugget" + (!mouseOn ? " hide-prop" : "")}>
           ({mouseX}, {mouseY})
+        </div>
+
+        <div class={"nugget"}>
+          {contentSceneAvailable ? "Editor" : "Settings"}
         </div>
       </section>
     </div>
@@ -145,27 +151,40 @@
       .editor-area {
         display: flex;
         flex-direction: column;
-        width: calc(100vw - 320px - 10px);
+        width: calc(100vw - 320px);
         height: 100%;
         overflow: hidden;
         transition: 100ms;
         border-radius: 4px;
 
         .tabs {
-          height: 30px;
+          height: 40px;
           display: flex;
           flex-direction: row;
           background: $l0;
           min-height: 30px;
-          width: 100%;
+          width: calc(100vw - 320px + 5px);
+          margin-left: -5px;
+          align-items: center;
+          justify-content: center;
+
+          .inner {
+            width: calc(100% - 10px);
+            height: calc(100% - 10px);
+            border-radius: 4px;
+            background: $l1;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+          }
         }
 
         .view {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 100%;
-          height: calc(100vh - (50px + 30px) - 40px - 30px - (10px / 2));
+          width: calc(100vw - 320px - 5px);
+          height: calc(100vh - (50px + 30px) - 40px - 30px - (10px / 2) - 10px);
           transition: opacity 200ms, transform 200ms, border-width 200ms, border-radius 200ms;
           border: 0px solid $ct0;
           border-radius: 4px;
@@ -200,9 +219,18 @@
         align-items: center;
         justify-content: space-between;
         width: calc(100% - 10px);
-        height: calc(100% - 10px);
+        height: calc(100% - 5px);
+        margin-bottom: 5px;
         background: $l1;
         border-radius: 4px;
+        padding: 0 5px;
+        overflow: hidden;
+
+        .left {
+          width: calc(50vw - 10px);
+          display: flex;
+          align-items: center;
+        }
 
         .nugget {
           display: flex;
@@ -213,9 +241,21 @@
           text-align: center;
           border-radius: 2px;
           position: relative;
+          transition: transform 100ms;
+          white-space: nowrap;
+          margin-right: 10px;
 
-          &:nth-child(1) {
-            margin-left: 5px;
+          &.hide-prop {
+            opacity: 0;
+            width: 0px;
+            padding: 0;
+            margin-right: 0;
+            transform: scale(0.8);
+
+            &:after {
+              right: 0;
+              opacity: 0;
+            }
           }
 
           &:after {
@@ -226,6 +266,13 @@
             width: 1px;
             height: calc(40px - 10px - 10px - 5px);
             background: $d0;
+            transition: 100ms;
+          }
+
+          &:nth-last-child(1) {
+            &:after {
+              opacity: 0;
+            }
           }
         }
       }
