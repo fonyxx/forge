@@ -6,6 +6,42 @@
 
   let mouseX = 0, mouseY = 0, mouseOn = false;
 
+  const menuItems: {
+    label: string;
+    fn: () => void;
+  }[] = [
+    {
+      label: "New",
+      fn: () => {
+        console.log("New");
+      }
+    },
+    {
+      label: "Open",
+      fn: () => {
+        console.log("Open");
+      }
+    },
+    {
+      label: "Save",
+      fn: () => {
+        console.log("Save");
+      }
+    },
+    {
+      label: "Save As",
+      fn: () => {
+        console.log("Save As");
+      }
+    },
+    {
+      label: "Exit",
+      fn: () => {
+        window.close();
+      }
+    }
+  ]
+
   function setSceneMode(mode: boolean = !contentSceneAvailable) {
     if (contentSceneAvailable) {
       editorAvailable = false;
@@ -23,7 +59,27 @@
 
 <div class="true">
   <div class="top">
+    <div class="inner">
+      <div class="left">
+        <div class="icon">
+          A
+        </div>
 
+        <span>Forge Studio</span>
+      </div>
+    </div>
+
+    <div class="menu">
+      <div class="left">
+        {#each menuItems as item}
+          <button on:click={item.fn}>{item.label}</button>
+        {/each}
+      </div>
+
+      <div class="right">
+        <button on:click={() => location.reload()}>R</button>
+      </div>
+    </div>
   </div>
 
   <div class={"body" + (!contentSceneAvailable ? " disable-scene" : "")}>
@@ -88,6 +144,81 @@
       top: 0;
       left: 0;
       z-index: 1;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 5px;
+      -webkit-app-region: drag;
+
+      .inner {
+        width: calc(100vw - 10px);
+        min-height: calc(50px - 10px);
+        background: $l1;
+        border-radius: 4px 4px 0 0;
+        padding: 0 5px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 2.5px;
+
+        .left {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+
+          .icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: $ct1;
+            font-size: 30px;
+          }
+        }
+      }
+
+      .menu {
+        width: calc(100vw - 10px);
+        height: calc(35px);
+        background: $l1;
+        border-radius: 0 0 4px 4px;
+        margin-top: -5px;
+        display: flex;
+        align-items: center;
+        padding: 0 5px;
+        justify-content: space-between;
+
+        button {
+          -webkit-app-region: no-drag;
+          background: transparent;
+          padding: 0 5px;
+          border: none;
+          color: $f0;
+          font-size: 11px;
+          cursor: pointer;
+          transition: 100ms;
+          border-radius: 2px;
+          height: calc(35px - 10px);
+
+          &:hover {
+            color: $f1;
+            background: $d0;
+          }
+        }
+
+        .right button {
+          min-width: calc(35px - 10px);
+          margin-left: 5px;
+        }
+
+        .left button {
+          margin-right: 5px;
+        }
+      }
     }
 
     .document {
@@ -98,6 +229,7 @@
       height: calc(100vh - (50px + 30px) - 40px);
       background: $l0;
       transition: opacity 200ms, top 200ms, transform 200ms, filter 200ms;
+      padding: 5px;
 
       &.disable-document {
         pointer-events: none;
@@ -158,11 +290,11 @@
         border-radius: 4px;
 
         .tabs {
-          height: 40px;
+          height: 45px;
+          min-height: 45px;
           display: flex;
           flex-direction: row;
           background: $l0;
-          min-height: 30px;
           width: calc(100vw - 320px + 5px);
           margin-left: -5px;
           align-items: center;
@@ -171,6 +303,7 @@
           .inner {
             width: calc(100% - 10px);
             height: calc(100% - 10px);
+            min-height: calc(100% - 10px);
             border-radius: 4px;
             background: $l1;
             display: flex;
@@ -184,7 +317,7 @@
           align-items: center;
           justify-content: center;
           width: calc(100vw - 320px - 5px);
-          height: calc(100vh - (50px + 30px) - 40px - 30px - (10px / 2) - 10px);
+          height: calc(100vh - (50px + 30px) - 40px - 30px - 10px - 10px);
           transition: opacity 200ms, transform 200ms, border-width 200ms, border-radius 200ms;
           border: 0px solid $ct0;
           border-radius: 4px;
