@@ -1,5 +1,6 @@
 <script lang="ts">
   import UserGrid from "../components/UserGrid/UserGrid.svelte";
+  import Zth from "./Zth.svelte";
 
   let editorAvailable = true;
   let contentSceneAvailable = true;
@@ -125,6 +126,8 @@
       </section>
     </div>
   </div>
+
+  <Zth />
 </div>
 
 <style lang="scss">
