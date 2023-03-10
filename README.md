@@ -1,2 +1,34 @@
-![image](https://user-images.githubusercontent.com/117920879/224015323-900e2ee0-ef1c-4eec-8cf7-9c6fda4b3faf.png)
-![image](https://user-images.githubusercontent.com/117920879/224015337-a93ea894-8747-43ed-8f9b-cb75cab381fa.png)
+# forge
+
+An Electron application with Svelte and TypeScript
+
+## Recommended IDE Setup
+
+- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+
+## Project Setup
+
+### Install
+
+```bash
+$ npm install
+```
+
+### Development
+
+```bash
+$ npm run dev
+```
+
+### Build
+
+```bash
+# For windows
+$ npm run build:win
+
+# For macOS
+$ npm run build:mac
+
+# For Linux
+$ npm run build:linux
+```
