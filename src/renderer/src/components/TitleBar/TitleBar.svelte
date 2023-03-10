@@ -66,7 +66,8 @@
   <div class="header">
     <div class="info">
       <div class="icon">
-        <img alt="" src={IconLogo} />
+          <div class={"loader" + (query.length > 0 && dropDown.length == 0 ? " show" : "")}></div>
+          <img alt="" src={IconLogo} class={query.length > 0 && dropDown.length == 0 ? "hide" : ""} />
       </div>
 
       <span class="title">{title}</span>
@@ -158,10 +159,43 @@
           overflow: hidden;
           margin-left: 10px;
           margin-right: 10px;
+          position: relative;
+
+          .loader {
+            width: 100%;
+            height: 100%;
+            border: 3px solid $c1;
+            border-top-color: $bdr;
+            border-radius: 100%;
+            animation: spin 0.25s linear infinite;
+            position: absolute;
+            opacity: 0;
+            transition: 200ms;
+
+            &.show {
+              opacity: 1;
+            }
+          }
+
+          @keyframes spin {
+            0% {
+              transform: rotate(0deg);
+            }
+
+            100% {
+              transform: rotate(360deg);
+            }
+          }
 
           img {
             width: 100%;
             height: 100%;
+            position: absolute;
+            transition: 200ms;
+
+            &.hide {
+              opacity: 0;
+            }
           }
         }
       }

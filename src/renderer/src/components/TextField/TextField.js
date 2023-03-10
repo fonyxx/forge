@@ -1,5 +1,10 @@
 export function searchEngineProcess(query = "", queryNetwork = [], maxResults = 10, ddCallback = (dd) => {}, writeToSearchDelayObj, writeTime = 100) {
     if (query.length > 0) {
+        // reset best match
+        queryNetwork.forEach((item) => {
+            item.bestMatch = false;
+        });
+
         ddCallback([]);
         const words = query.split(" ");
         let result = [];

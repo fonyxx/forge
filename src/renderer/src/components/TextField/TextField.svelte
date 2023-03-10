@@ -89,7 +89,7 @@
                 {/if}
 
                 <div class="info">
-                    <div class={"best-match " + (!item.bestMatch ? "hide" : "")}>
+                    <div class={"best-match " + (item.bestMatch == false || item.bestMatch == undefined || item.bestMatch == null ? "hide" : "")}>
                         <span>Best Match</span>
                     </div>
 
@@ -241,6 +241,10 @@
                             background: $success1;
                             color: $l1;
                             border-radius: 3px;
+                        }
+
+                        &.hide {
+                            display: none;
                         }
                     }
 
