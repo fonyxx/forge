@@ -1,5 +1,5 @@
 <script lang="ts">
-  import TrueApp from "./app/True.svelte";
+  import TitleBar from "./components/TitleBar/TitleBar.svelte";
 </script>
 
-<TrueApp />
+<TitleBar />
