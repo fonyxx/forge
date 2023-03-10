@@ -1,10 +1,10 @@
-export function searchEngineProcess(query = "", queryNetwork = [], maxResults = 10, ddCallback = (dd) => {}, writeToSearchDelay, writeTime = 100) {
+export function searchEngineProcess(query = "", queryNetwork = [], maxResults = 10, ddCallback = (dd) => {}, writeToSearchDelayObj, writeTime = 100) {
     if (query.length > 0) {
         ddCallback([]);
         const words = query.split(" ");
         let result = [];
 
-        clearTimeout(writeToSearchDelay);
+        clearTimeout(writeToSearchDelayObj.x);
         
         for (let possibleResult = 0; possibleResult < maxResults; possibleResult++) {
             words.forEach((word) => {
@@ -45,10 +45,11 @@ export function searchEngineProcess(query = "", queryNetwork = [], maxResults = 
             });
         }
 
-        writeToSearchDelay = setTimeout(() => {
+        writeToSearchDelayObj.x = setTimeout(() => {
             if (result[0]) {
                 result[0].bestMatch = true;
             }
+
             ddCallback(result);
         }, writeTime);
     } else {

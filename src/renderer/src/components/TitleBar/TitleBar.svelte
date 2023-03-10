@@ -48,7 +48,7 @@
 
   }
 
-  let writeToSearchDelay: any;
+  let writeToSearchDelay = { x: null as any };
   let writeTime = 500;
 
   $: {
