@@ -2,6 +2,8 @@
   import TitleBar from "./components/TitleBar/TitleBar.svelte";
   import {onMount} from "svelte";
   import type { DropDown } from "./components/TextField/TextField.ts";
+  import Menu from "./components/TitleBar/Menu.svelte";
+  import type {TitleBarMenuItem} from "./components/TitleBar/TitleBar.ts";
 
   const dropDown: DropDown[] = [
     {
@@ -117,10 +119,46 @@
 
     handleOledProcess();
   });
+
+  const menuItems: TitleBarMenuItem[] = [
+    {
+      type: "item",
+      label: "Reload",
+      onClick: () => {
+        window.location.reload();
+      }
+    },
+    {
+      type: "separator"
+    },
+    {
+      type: "group",
+      label: "Layout",
+      children: [
+        {
+          type: "item",
+          label: "Right to Left",
+          onClick: () => {
+            localStorage.setItem("layoutMode", "rtl");
+            layoutMode = "rtl";
+          }
+        },
+        {
+          type: "item",
+          label: "Left to Right",
+          onClick: () => {
+            localStorage.setItem("layoutMode", "ltr");
+            layoutMode = "ltr";
+          }
+        }
+      ]
+    }
+  ]
 </script>
 
 <div class="app">
   <TitleBar queryNetwork={dropDown} mode={layoutMode} title="تشكيل" />
+  <Menu x={100} y={100} items={menuItems} />
 </div>
 
 <style lang="scss">

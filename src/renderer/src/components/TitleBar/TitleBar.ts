@@ -1,11 +1,19 @@
-export interface TitleBarMenuItemDirect {
+export interface TitleBarMenuItemItem {
     label: string;
-    onClick: () => void;
+    onClick?: () => void;
+    type: "item";
+    icon?: string;
 }
 
-export interface TitleBarMenuItemPassive {
+export interface TitleBarMenuItemGroup {
   label: string;
-  children: TitleBarMenuItem[];
+  children?: TitleBarMenuItem[];
+  type: "group";
+  icon?: string;
 }
 
-export type TitleBarMenuItem = TitleBarMenuItemDirect | TitleBarMenuItemPassive;
+export interface TitleBarMenuItemSeparator {
+  type: "separator";
+}
+
+export type TitleBarMenuItem = TitleBarMenuItemItem | TitleBarMenuItemGroup | TitleBarMenuItemSeparator;

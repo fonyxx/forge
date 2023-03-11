@@ -57,7 +57,7 @@
 
     <div class="command">
       <div class="input" bind:clientHeight={commandHeight} bind:clientWidth={commandWidth}>
-        <TextField rtl={mode === "rtl"} loadable={true} placeholder="Enter a command, file, setting, or macro" dropDown={dropDown} bind:data={query} />
+        <TextField rtl={mode === "rtl"} loadable={true} placeholder="أدخل أمرًا أو ملفًا أو ماكرو أو تكوينًا" dropDown={dropDown} bind:data={query} />
       </div>
     </div>
 

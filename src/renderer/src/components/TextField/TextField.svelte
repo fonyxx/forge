@@ -208,6 +208,7 @@
             display: flex;
             flex-direction: column;
             overflow: auto;
+            box-shadow: $bxshd;
 
             &.hide {
                 transform: translate(0, -10px);
