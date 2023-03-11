@@ -1,10 +1,9 @@
 * {
   box-sizing: border-box;
-  font-family: "Segoe UI Variable", "Segoe UI", "Segoe WP", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Cairo', sans-serif;
 }
 
 body {
-  background: #181818;
   color: #fff;
   font-size: 11px;
   margin: 0;

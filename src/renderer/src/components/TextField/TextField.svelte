@@ -1,15 +1,16 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte"
     import Icon from "@iconify/svelte"
-    import type { DropDown } from "./TextField";
-    
-    export let 
+    import type { DropDown } from "./TextField.ts";
+
+    export let
         placeholder = "",
         initialValue = "",
         dropDown: DropDown[] = [],
-        autoComplete = "";
+        autoComplete = "",
+        rtl = false;
 
-    export let data: string = initialValue;
+    export let data: string = initialValue, loadable = false;
     let input: HTMLInputElement;
     let width = 0, height = 0, x = 0, y = 0;
     let element: HTMLDivElement;
@@ -47,13 +48,16 @@
     }
 </script>
 
-<div class="text-field" bind:clientWidth={width} bind:clientHeight={height} bind:this={element}>
-    <input bind:this={input} type="text" placeholder={placeholder} on:input={(e) => {
+<div class={"text-field" + (dropDownToUse.length == 0 && data?.length > 0 && loadable ? " busy" : "")}
+     bind:clientWidth={width} bind:clientHeight={height} bind:this={element}>
+    <input dir={rtl ? "rtl" : "ltr"} bind:this={input} type="text" placeholder={placeholder} on:input={(e) => {
         data = e.target.value;
     }} />
 
-    <div 
-        class={"drop-down" + (dropDownToUse.length == 0 || tempForceHide ? " hide" : "")}
+    <div class={"loader" + (rtl ? " rtl" : "")}></div>
+
+    <div
+        class={"drop-down" + (dropDownToUse.length == 0 || tempForceHide ? " hide" : "") + (rtl ? " rtl" : "")}
         style={`
             width: ${width}px;
             top: ${y}px;
@@ -126,7 +130,9 @@
         align-items: center;
         border: 1px solid $bdr;
         transition: 200ms;
-        
+        overflow: hidden;
+        position: relative;
+
         input {
             background: transparent;
             border: none;
@@ -136,7 +142,7 @@
             height: 35px;
             border-radius: 3px;
             padding: 0 10px;
-            border-bottom: 1px solid $bdr;
+            border-bottom: 1px solid transparent;
             transition: 200ms;
         }
 
@@ -146,6 +152,45 @@
             input {
                 border-bottom-color: $c1;
             }
+        }
+
+        .loader {
+          transition: 200ms;
+          width: 50%;
+          position: absolute;
+          height: 2px;
+          background: $c1;
+          bottom: 0;
+          transform: translate(-100%, 0);
+          animation: loader 0.5s infinite;
+          opacity: 0;
+          pointer-events: none;
+
+          &.rtl {
+            animation-direction: reverse;
+          }
+        }
+
+        @keyframes loader {
+          0% {
+            transform: translate(-100%, 0);
+          }
+
+          100% {
+            transform: translate(200%, 0);
+          }
+        }
+
+        &.busy {
+          border-bottom-color: $bdr !important;
+
+          input {
+            border-bottom-color: $bdr !important;
+          }
+
+          .loader {
+            opacity: 1;
+          }
         }
 
         .drop-down {
@@ -224,7 +269,7 @@
                     }
 
                     &.error {
-                        background: $hazzard1;
+                        background: $hazard1;
                         color: $l1;
                     }
                 }
@@ -274,6 +319,10 @@
                     }
                 }
             }
+
+          &.rtl {
+            direction: rtl;
+          }
         }
     }
 </style>

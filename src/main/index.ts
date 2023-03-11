@@ -1,7 +1,19 @@
-import { app, session, BrowserWindow } from 'electron'
+import { app, session, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import drpc from 'discord-rich-presence'
+
+const code = "1083911741907415090";
+const rpc = drpc(code);
+
+rpc.updatePresence({
+  state: "Forging",
+  details: "Starting the IDE",
+  startTimestamp: Date.now(),
+  instance: true,
+  largeImageKey: "frame_3_1_",
+});
 
 function createWindow(): void {
   // Create the browser window.
@@ -19,11 +31,50 @@ function createWindow(): void {
       nodeIntegration: true,
       webSecurity: false,
     }
-  })
+  });
+
+  // create an invoke handler for 'set window.minimize' event
+  ipcMain.on('set window.minimized', () => {
+    mainWindow.minimize()
+  });
+
+  // create an invoke handler for 'set window.maximize' event
+  ipcMain.on('set window.maximized', () => {
+    mainWindow.maximize();
+  });
+
+  // create an invoke handler for 'set window.unmaximize' event
+  ipcMain.on('set window.un-maximized', () => {
+    mainWindow.unmaximize();
+  });
+
+  // create an invoke handler for 'get window.isMaximized' event
+  ipcMain.handle('get window.is-maximized', () => {
+    return mainWindow.isMaximized()
+  });
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
-  })
+    rpc.updatePresence({
+      state: "Forging",
+      details: "Loading workspace",
+      startTimestamp: Date.now(),
+      instance: true,
+      largeImageKey: "frame_3_1_",
+    });
+  });
+
+  mainWindow.on("unmaximize", () => {
+    mainWindow.webContents.send("listen window.state-change");
+  });
+
+  mainWindow.on("maximize", () => {
+    mainWindow.webContents.send("listen window.state-change");
+  });
+
+  mainWindow.on("minimize", () => {
+    mainWindow.webContents.send("listen window.state-change");
+  });
 
   session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
     details.requestHeaders['Origin'] = process.env['ELECTRON_RENDERER_URL'];

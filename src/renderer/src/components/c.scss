@@ -1,8 +1,8 @@
 $l0: #000000;
-$l1: #181818;
+$l1: var(--l1);
 
-$d0: rgba(255, 255, 255, 8%);
-$d1: rgba(255, 255, 255, 13%);
+$d0: var(--d0);
+$d1: var(--d1);
 
 $f0: #999999;
 $f1: #ffffff;
@@ -11,6 +11,6 @@ $bdr: rgba(255, 255, 255, 5%);
 
 $c1: #FF003D;
 
-$hazzard1: #FF003D;
+$hazard1: #FF003D;
 $warning1: #fffc5e;
 $success1: #50ffab;

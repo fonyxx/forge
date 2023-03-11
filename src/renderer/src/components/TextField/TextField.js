@@ -1,4 +1,4 @@
-export function searchEngineProcess(query = "", queryNetwork = [], maxResults = 10, ddCallback = (dd) => {}, writeToSearchDelayObj, writeTime = 100) {
+export function searchEngineProcess(query = "", queryNetwork = [], maxResults = 10, ddCallback, writeToSearchDelayObj, writeTime = 100) {
     if (query.length > 0) {
         // reset best match
         queryNetwork.forEach((item) => {
@@ -10,7 +10,7 @@ export function searchEngineProcess(query = "", queryNetwork = [], maxResults = 
         let result = [];
 
         clearTimeout(writeToSearchDelayObj.x);
-        
+
         for (let possibleResult = 0; possibleResult < maxResults; possibleResult++) {
             words.forEach((word) => {
             queryNetwork.forEach((item) => {
@@ -26,7 +26,7 @@ export function searchEngineProcess(query = "", queryNetwork = [], maxResults = 
 
                 item.keywords.forEach((keyword) => {
                 const wordsKeyWord = keyword.split(" ");
-                
+
                 if (result.find((r) => r.label === item.label)) return;
 
                 for (let i = 0; i < wordsKeyWord.length; i++) {
@@ -59,5 +59,5 @@ export function searchEngineProcess(query = "", queryNetwork = [], maxResults = 
         }, writeTime);
     } else {
         ddCallback([]);
-    }   
+    }
 }

@@ -1,52 +1,37 @@
 <script lang="ts">
-  import IconLogo from "../../assets/icons.svg";
-  import Icon from "@iconify/svelte";
+  import { searchEngineProcess } from "../TextField/TextField.js";
+  import Info from "./Info.svelte";
   import TextField from "../TextField/TextField.svelte";
-  import { searchEngineProcess } from "../TextField/TextField";
-  import type { DropDown } from "../TextField/TextField";
+  import Controls from "./Controls/Controls.svelte";
+  import type { DropDown } from "../TextField/TextField.ts";
+  import type { TitleBarMenuItem } from "./TitleBar.ts";
 
-  export let title = "Windows";
+  export let title = "Windows", mode: "ltr" | "rtl" = "ltr";
   let dropDown: DropDown[] = [];
 
-  let queryNetwork: DropDown[] = [
+  export let queryNetwork: DropDown[] = [];
+
+  const titleBarMenu: TitleBarMenuItem[] = [
     {
-      label: "Reload window",
-      value: "Soft restart the tool",
-      icon: "[icon] fluent:arrow-clockwise-16-regular",
-      iconColor: "warning",
-      onClick: () => {
-        window.location.reload();
-      },
-      keywords: ["soft reload", "reload", "restart", "refresh", "reset", "rerun"]
+      label: "ملف",
+      children: []
     },
     {
-      label: "Halt the app forcefully",
-      value: "Hard restart the tool",
-      icon: "[icon] fluent:record-stop-16-regular",
-      iconColor: "error",
-      onClick: () => {
-        window.close();
-      },
-      keywords: ["hard reload", "close", "halt", "kill", "terminate", "stop", "exit", "reset"]
+      label: "يحرر",
+      children: []
     },
     {
-      label: "About the program",
-      value: "Information about the program",
-      icon: "[icon] fluent:info-16-regular",
-      onClick: () => {
-        console.log("About the program");
-        alert("Fonyx Forge - [2023+] - build 0.0.1");
-      },
-      keywords: ["about", "info", "information", "version", "build", "program", "app", "application"]
+      label: "عرض",
+      children: []
+    },
+    {
+      label: "مساعدة",
+      children: []
     }
   ];
 
   let query = "";
   const maxResults = 20;
-
-  function handleWindowEvent(event: "close" | "trigger" | "minimize") {
-
-  }
 
   let writeToSearchDelay = { x: null as any };
   let writeTime = 500;
@@ -57,63 +42,42 @@
     }, writeToSearchDelay, writeTime)
   }
 
-  let 
+  let
     commandWidth = 0,
     commandHeight = 0;
 </script>
 
-<div class="title-bar">
+<div class={"title-bar" + (mode == "rtl" ? " rtl" : "")}>
   <div class="header">
-    <div class="info">
-      <div class="icon">
-          <div class={"loader" + (query.length > 0 && dropDown.length == 0 ? " show" : "")}></div>
-          <img alt="" src={IconLogo} class={query.length > 0 && dropDown.length == 0 ? "hide" : ""} />
-      </div>
-
-      <span class="title">{title}</span>
-    </div>
+    {#if mode == "ltr"}
+      <Info query={query} title={title} dropDown={dropDown} />
+    {:else}
+      <Controls />
+    {/if}
 
     <div class="command">
       <div class="input" bind:clientHeight={commandHeight} bind:clientWidth={commandWidth}>
-        <TextField placeholder="Enter a command, file, setting, or macro" dropDown={dropDown} bind:data={query} />
+        <TextField rtl={mode === "rtl"} loadable={true} placeholder="Enter a command, file, setting, or macro" dropDown={dropDown} bind:data={query} />
       </div>
     </div>
 
-    <div class="control">
-      <button on:click={handleWindowEvent("minimize")}>
-        <div class="spacer">
-          <Icon icon="fluent:subtract-16-regular" />
-        </div>
-
-        <div class="icon">
-          <Icon icon="fluent:subtract-16-regular" />
-        </div>
-      </button>
-
-      <button on:click={handleWindowEvent("trigger")}>
-        <div class="spacer">
-          <Icon icon="fluent:maximize-16-regular" />
-        </div>
-
-        <div class="icon">
-          <Icon icon="fluent:maximize-16-regular" />
-        </div>
-      </button>
-
-      <button on:click={handleWindowEvent("close")}>
-        <div class="spacer">
-          <Icon icon="fluent:dismiss-16-regular" />
-        </div>
-
-        <div class="icon">
-          <Icon icon="fluent:dismiss-16-regular" />
-        </div>
-      </button>
-    </div>
+    {#if mode == "ltr"}
+      <Controls rtl={true} />
+    {:else}
+      <Info rtl={true} query={query} title={title} dropDown={dropDown} />
+    {/if}
   </div>
 
-  <div class="menu">
+  <hr />
 
+  <div class="menu" style={`direction: ${mode}`}>
+    <div class="left">
+      {#each titleBarMenu as item}
+        <div class="item">
+          <span>{item.label}</span>
+        </div>
+      {/each}
+    </div>
   </div>
 </div>
 
@@ -125,10 +89,42 @@
     background: $l0;
     -webkit-app-region: drag;
 
+    hr {
+      width: 100vw;
+      height: 1px;
+      background: $bdr;
+      border: none;
+      margin: 0;
+    }
+
     .menu {
-      height: 30px;
+      height: 40px;
       width: 100vw;
       display: flex;
+      flex-direction: row;
+      padding: 0 10px;
+
+      .left {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        height: 100%;
+
+        .item {
+          padding: 0 10px;
+          display: flex;
+          align-items: center;
+          transition: 200ms;
+          cursor: pointer;
+          -webkit-app-region: no-drag;
+          height: calc(100% - 10px);
+          border-radius: 3px;
+
+          &:hover {
+            background: $d0;
+          }
+        }
+      }
     }
 
     .header {
@@ -140,64 +136,10 @@
       align-items: center;
       justify-content: space-between;
 
-      .info, .command, .control {
+      .command {
         height: 100%;
         display: flex;
         align-items: center;
-      }
-
-      .info {
-        .icon {
-          width: 30px;
-          height: 30px;
-          min-width: 30px;
-          max-width: 30px;
-          border-radius: 3px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
-          margin-left: 10px;
-          margin-right: 10px;
-          position: relative;
-
-          .loader {
-            width: 100%;
-            height: 100%;
-            border: 3px solid $c1;
-            border-top-color: $bdr;
-            border-radius: 100%;
-            animation: spin 0.25s linear infinite;
-            position: absolute;
-            opacity: 0;
-            transition: 200ms;
-
-            &.show {
-              opacity: 1;
-            }
-          }
-
-          @keyframes spin {
-            0% {
-              transform: rotate(0deg);
-            }
-
-            100% {
-              transform: rotate(360deg);
-            }
-          }
-
-          img {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            transition: 200ms;
-
-            &.hide {
-              opacity: 0;
-            }
-          }
-        }
       }
 
       .command {
@@ -216,74 +158,6 @@
           display: flex;
           align-items: center;
           justify-content: center;
-        }
-      }
-
-      .control {
-        display: flex;
-        align-items: center;
-
-        button {
-          height: 100%;
-          outline: none;
-          -webkit-app-region: no-drag;
-          border: none;
-          margin: 0;
-          color: $f0;
-          background: transparent;
-          font-size: 16px;
-          cursor: pointer;
-          transition: 200ms;
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding-top: 1px;
-
-          &:nth-child(1) {
-            font-size: 17px;
-          }
-
-          &:after {
-            content: "";
-            display: flex;
-            width: 100%;
-            height: calc(100% - 15px);
-            position: absolute;
-            border-radius: 3px;
-            transition: 200ms;
-          }
-
-          .spacer {
-            transition: 100ms;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-
-          .icon {
-            position: absolute;
-            transition: 200ms;
-            opacity: 0;
-            color: $f1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-
-          &:hover {
-            .icon {
-              opacity: 1;
-            }
-
-            .spacer {
-              opacity: 0;
-            }
-
-            &:after {
-              background: $d0;
-            }
-          }
         }
       }
     }
