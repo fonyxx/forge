@@ -17,6 +17,7 @@
     let positionLoop: any;
     let tempForceHide = false;
     let dropDownToUse: DropDown[] = [];
+    let showDropDown = false;
 
     onMount(() => {
         input.value = initialValue;
@@ -52,12 +53,16 @@
      bind:clientWidth={width} bind:clientHeight={height} bind:this={element}>
     <input dir={rtl ? "rtl" : "ltr"} bind:this={input} type="text" placeholder={placeholder} on:input={(e) => {
         data = e.target.value;
+    }} on:blur={() => {
+      showDropDown = false;
+    }} on:focus={() => {
+      showDropDown = true;
     }} />
 
     <div class={"loader" + (rtl ? " rtl" : "")}></div>
 
     <div
-        class={"drop-down" + (dropDownToUse.length == 0 || tempForceHide ? " hide" : "") + (rtl ? " rtl" : "")}
+        class={"drop-down" + (dropDownToUse.length == 0 || tempForceHide || !showDropDown ? " hide" : "") + (rtl ? " rtl" : "")}
         style={`
             width: ${width}px;
             top: ${y}px;
@@ -66,7 +71,9 @@
         `}
     >
         {#each dropDownToUse as item, index}
-            <div class="item" on:click={() => {
+            <div class="item" on:mousedown={(e) => {
+                e.preventDefault();
+            }} on:click={() => {
                 tempForceHide = true;
 
                 setTimeout(() => {
@@ -79,18 +86,16 @@
 
                     setTimeout(() => {
                         if (item.onClick) item.onClick();
-                    }, 100);
+                    }, 200);
                 }, 200);
             }}>
-                {#if item.icon?.length > 0}
-                    <div class={"icon " + (item.iconColor ? item.iconColor : "neutral")}>
-                        {#if item.icon?.startsWith("[icon] ")}
-                            <Icon icon={item.icon.replace("[icon] ", "")} />
-                        {:else}
-                            <img src={item.icon} alt="$$" />
-                        {/if}
-                    </div>
-                {/if}
+                <div class={"icon " + (item.iconColor ? item.iconColor : "neutral") + (item.icon?.length > 0 ? "" : " no-icon")}>
+                    {#if item.icon?.startsWith("[icon] ")}
+                        <Icon icon={item.icon.replace("[icon] ", "")} />
+                    {:else if item.icon?.length > 0}
+                        <img src={item.icon} alt="$$" />
+                    {/if}
+                </div>
 
                 <div class="info">
                     <div class={"best-match " + (item.bestMatch == false || item.bestMatch == undefined || item.bestMatch == null ? "hide" : "")}>
@@ -123,7 +128,6 @@
 
     .text-field {
         width: 100%;
-        min-height: 35px;
         border-radius: 3px;
         background: $d0;
         display: flex;
@@ -132,6 +136,7 @@
         transition: 200ms;
         overflow: hidden;
         position: relative;
+        height: 100%;
 
         input {
             background: transparent;
@@ -139,7 +144,7 @@
             outline: none;
             color: $f1;
             width: 100%;
-            height: 35px;
+            height: 100%;
             border-radius: 3px;
             padding: 0 10px;
             border-bottom: 1px solid transparent;
@@ -259,6 +264,10 @@
                     justify-content: center;
                     font-size: 20px;
                     background: $d0;
+
+                    &.no-icon {
+                     background: transparent;
+                    }
 
                     &.success {
                         color: $success1;

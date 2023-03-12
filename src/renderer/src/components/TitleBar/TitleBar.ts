@@ -10,6 +10,8 @@ export interface TitleBarMenuItemGroup {
   children?: TitleBarMenuItem[];
   type: "group";
   icon?: string;
+  shortcut?: string;
+  position: "right" | "left";
 }
 
 export interface TitleBarMenuItemSeparator {

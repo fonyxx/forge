@@ -1,15 +1,32 @@
 <script lang="ts">
-  import IconLogo from "../../assets/icons.svg";
+  import Logo from "../../assets/Logo.svelte";
   import type { DropDown } from "../TextField/TextField.ts";
+  import type {TitleBarMenuItem} from "./TitleBar.ts";
 
   export let query = "", title = "Windows", rtl = false, dropDown: DropDown[] = [];
+  export let menuData: TitleBarMenuItem[] = [
+    {
+      label: "Restore"
+    },
+    {
+      label: "Minimize"
+    },
+    {
+      label: "Maximize"
+    },
+    {
+      label: "Close"
+    }
+  ];
 </script>
 
-<div class="info">
+<div class="info" on:click={() => {
+   window.comu.emit("show", menuData);
+}}>
   {#if !rtl}
     <div class="icon ltr">
       <div class={"loader" + (query.length > 0 && dropDown.length == 0 ? " show" : "")}></div>
-      <img alt="" src={IconLogo} class={query.length > 0 && dropDown.length == 0 ? "hide" : ""} />
+      <Logo opacity={query.length > 0 && dropDown.length == 0 ? 0 : 1} />
     </div>
   {:else}
     <span class="title">{title}</span>
@@ -18,7 +35,7 @@
   {#if rtl}
     <div class="icon rtl">
       <div class={"loader rtl" + (query.length > 0 && dropDown.length == 0 ? " show" : "")}></div>
-      <img alt="" src={IconLogo} class={query.length > 0 && dropDown.length == 0 ? "hide" : ""} />
+      <Logo opacity={query.length > 0 && dropDown.length == 0 ? 0 : 1} />
     </div>
   {:else}
     <span class="title">{title}</span>
@@ -45,6 +62,8 @@
       justify-content: center;
       overflow: hidden;
       position: relative;
+      color: $c1;
+      -webkit-app-region: no-drag;
 
       &.rtl {
         margin-right: 10px;

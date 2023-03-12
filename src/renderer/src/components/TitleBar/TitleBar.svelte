@@ -78,6 +78,15 @@
         </div>
       {/each}
     </div>
+
+    <div class="right">
+      <button on:click={() => {
+        // run the command 'open https://discord.gg/Yyfng8ybFY'
+
+      }}>
+        Enter Discord
+      </button>
+    </div>
   </div>
 </div>
 
@@ -143,13 +152,13 @@
       }
 
       .command {
-        width: auto;
         display: flex;
         align-items: center;
         justify-content: center;
         width: 100%;
         max-width: 500px;
         margin: 0 50px;
+        height: calc(100% - 10px);
 
         .input {
           -webkit-app-region: no-drag;

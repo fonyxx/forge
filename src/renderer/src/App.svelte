@@ -1,9 +1,21 @@
 <script lang="ts">
   import TitleBar from "./components/TitleBar/TitleBar.svelte";
-  import {onMount} from "svelte";
+  import {onDestroy, onMount} from "svelte";
   import type { DropDown } from "./components/TextField/TextField.ts";
   import Menu from "./components/TitleBar/Menu.svelte";
   import type {TitleBarMenuItem} from "./components/TitleBar/TitleBar.ts";
+
+  let contextMenuX = 0, contextMenuY = 0;
+  let mouseX = 0, mouseY = 0, contextMenuSource: TitleBarMenuItem[] = [];
+  let contextMenuMouseOver = false, menuOpen = false;
+
+  function contextMenuShowHandler(data: TitleBarMenuItem[]) {
+    contextMenuX = mouseX;
+    contextMenuY = mouseY;
+
+    contextMenuSource = data;
+    menuOpen = true;
+  }
 
   const dropDown: DropDown[] = [
     {
@@ -29,7 +41,7 @@
     {
       label: "About the program",
       value: "Information about the program",
-      icon: "[icon] fluent:info-16-regular",
+      // icon: "[icon] fluent:info-16-regular",
       onClick: () => {
         console.log("About the program");
         alert("Fonyx Forge - [2023+] - build 0.0.1");
@@ -81,7 +93,7 @@
         layoutMode = "ltr";
       },
       keywords: ["ltr", "left to right", "english", "german", "russian", "language", "layout"]
-    }
+    },
   ];
 
   let oledMode = false;
@@ -100,6 +112,7 @@
   }
 
   onMount(() => {
+    window.comu.on("show", contextMenuShowHandler);
     const oledModeRaw = localStorage.getItem("oledMode");
     const layoutModeRaw = localStorage.getItem("layoutMode");
 
@@ -120,45 +133,24 @@
     handleOledProcess();
   });
 
-  const menuItems: TitleBarMenuItem[] = [
-    {
-      type: "item",
-      label: "Reload",
-      onClick: () => {
-        window.location.reload();
-      }
-    },
-    {
-      type: "separator"
-    },
-    {
-      type: "group",
-      label: "Layout",
-      children: [
-        {
-          type: "item",
-          label: "Right to Left",
-          onClick: () => {
-            localStorage.setItem("layoutMode", "rtl");
-            layoutMode = "rtl";
-          }
-        },
-        {
-          type: "item",
-          label: "Left to Right",
-          onClick: () => {
-            localStorage.setItem("layoutMode", "ltr");
-            layoutMode = "ltr";
-          }
-        }
-      ]
-    }
-  ]
+  onDestroy(() => {
+    window.comu.off("show", contextMenuShowHandler);
+  });
 </script>
 
-<div class="app">
+<div class="app" on:mousemove={e => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+}} on:mousedown={() => {
+  if (!contextMenuMouseOver) menuOpen = false;
+}}>
   <TitleBar queryNetwork={dropDown} mode={layoutMode} title="تشكيل" />
-  <Menu x={100} y={100} items={menuItems} />
+  <Menu
+    items={contextMenuSource} mode="manual"
+    mouseX={contextMenuX} mouseY={contextMenuY}
+    position={layoutMode === "ltr" ? "right" : "left"} rtl={layoutMode === "rtl"}
+    bind:open={menuOpen} bind:mouseOver={contextMenuMouseOver}
+  />
 </div>
 
 <style lang="scss">
