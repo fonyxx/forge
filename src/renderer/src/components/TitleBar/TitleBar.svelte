@@ -52,6 +52,9 @@
           shortcut: "Ctrl+Y"
         },
         {
+          type: "separator"
+        },
+        {
           label: "Cut",
           icon: "fluent:cut-20-regular",
           shortcut: "Ctrl+X"
@@ -65,6 +68,9 @@
           label: "Paste",
           icon: "fluent:clipboard-paste-16-regular",
           shortcut: "Ctrl+V"
+        },
+        {
+          type: "separator"
         },
         {
           label: "Select All",
@@ -100,6 +106,7 @@
 
   let writeToSearchDelay = { x: null as any };
   let writeTime = 500;
+  let currentActiveMenu = "";
 
   $: {
     searchEngineProcess(query, queryNetwork, maxResults, (dd) => {
@@ -115,6 +122,7 @@
   let openTimeout: any;
 
   function contextDisable() {
+    currentActiveMenu = "";
     console.log("IPC Supporter: Context menu halted process");
     clearTimeout(openTimeout);
     menuActive = false;
@@ -156,16 +164,20 @@
   <div class="menu" style={`direction: ${mode}`}>
     <div class="left">
       {#each titleBarMenu as item}
-        <div class="item" on:click={(e) => {
-          menuActive = true;
-          const rect = e.target.getBoundingClientRect();
-          openMenu(item.children, 50 + 40, rect.left);
+        <div class={"item" + (item.label == currentActiveMenu ? " specific" : "")} on:click={(e) => {
+          if (!menuActive) {
+            currentActiveMenu = item.label;
+            menuActive = true;
+            const rect = e.target.getBoundingClientRect();
+            openMenu(item.children, 50 + 40, mode === "rtl" ? rect.right : rect.left);
+          }
         }} on:mouseenter={(e) => {
           if (menuActive) {
+            currentActiveMenu = item.label;
             clearTimeout(openTimeout);
             openTimeout = setTimeout(() => {
               const rect = e.target.getBoundingClientRect();
-              if (menuActive) openMenu(item.children, 50 + 40, rect.left);
+              if (menuActive) openMenu(item.children, 50 + 40, mode === "rtl" ? rect.right : rect.left);
             }, 10);
           }
         }}>
@@ -229,6 +241,11 @@
           -webkit-app-region: no-drag;
           height: calc(100% - 10px);
           border-radius: 3px;
+
+          &.specific {
+            background: $d1 !important;
+            color: $f1;
+          }
 
           &:hover {
             background: $d0;

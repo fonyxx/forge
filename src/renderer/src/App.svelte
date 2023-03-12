@@ -149,7 +149,7 @@
 }}>
   <TitleBar queryNetwork={dropDown} mode={layoutMode} title="تشكيل" />
   <Menu
-    items={contextMenuSource} mode="manual"
+    items={contextMenuSource} mode="manual" rightLighter={layoutMode === "rtl"}
     mouseX={contextMenuX} mouseY={contextMenuY}
     position={layoutMode === "ltr" ? "right" : "left"} rtl={layoutMode === "rtl"}
     bind:open={menuOpen} bind:mouseOver={contextMenuMouseOver}

@@ -51,7 +51,7 @@
 <div
   class="menu"
   style={`
-    ${rightLighter ? ("right: " + mouseXRender + "px;") : ("left: " + mouseXRender + "px;")}
+    ${rightLighter ? ("right: " + (windowWidth - mouseXRender) + "px;") : ("left: " + mouseXRender + "px;")}
     top: ${mouseYRender}px;
     direction: ${rtl ? "rtl" : "ltr"};
     position: ${mode === "auto" ? "absolute" : "fixed"};
