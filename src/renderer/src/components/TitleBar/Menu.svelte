@@ -4,10 +4,13 @@
   import type {TitleBarMenuItem} from "./TitleBar.ts";
 
   export let items: TitleBarMenuItem[] = [];
+  let itemsActual: TitleBarMenuItem[] = [];
   export let
     mode: "auto" | "manual" = "auto", mouseX = 0, mouseY = 0,
     rtl = false, rightLighter = false, parentMenuSizeCount = 0,
     mouseOver = false, open = false;
+
+  let forceHide = true;
 
   let windowWidth = 0, windowHeight = 0;
   let selfWidth = 0, selfHeight = 0;
@@ -29,6 +32,16 @@
   let localVarsHeight: number[] = [];
   let localVarsWidth: number[] = [];
   let localItems: HTMLDivElement[] = [];
+
+  $: {
+    if (JSON.stringify(items) !== JSON.stringify(itemsActual)) {
+      forceHide = true;
+      setTimeout(() => {
+        itemsActual = items;
+        forceHide = false;
+      }, 200);
+    }
+  }
 </script>
 
 <div
@@ -38,16 +51,16 @@
     top: ${mouseY}px;
     direction: ${rtl ? "rtl" : "ltr"};
     position: ${mode === "auto" ? "absolute" : "fixed"};
-    opacity: ${open ? "1" : "0"};
-    ${!open ? "pointer-events: none;" : ""}
-    ${open ? "transform: scale(1);" : ""}
+    opacity: ${open && !forceHide ? "1" : "0"};
+    ${!open || forceHide ? "pointer-events: none;" : ""}
+    ${open && !forceHide ? "transform: scale(1);" : ""}
     max-height: ${windowHeight - mouseY}px;
   `}
   bind:clientWidth={selfWidth} bind:clientHeight={selfHeight}
   on:mouseenter={() => mouseOver = true} on:mouseleave={() => mouseOver = false}
 >
   <div class="inner">
-    {#each (Array.isArray(items) ? items : []) as item, index}
+    {#each (Array.isArray(itemsActual) ? itemsActual : []) as item, index}
       {#if item.type === "separator"}
         <hr />
       {:else}

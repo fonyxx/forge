@@ -31,7 +31,7 @@
 
             x = client.x;
             y = client.y + client.height;
-        }, 100);
+        }, 1000);
     });
 
     onDestroy(() => {
