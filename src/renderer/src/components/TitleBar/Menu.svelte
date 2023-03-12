@@ -11,6 +11,7 @@
     mouseOver = false, open = false;
 
   let forceHide = true;
+  let mouseXRender = 0, mouseYRender = 0;
 
   let windowWidth = 0, windowHeight = 0;
   let selfWidth = 0, selfHeight = 0;
@@ -34,10 +35,13 @@
   let localItems: HTMLDivElement[] = [];
 
   $: {
-    if (JSON.stringify(items) !== JSON.stringify(itemsActual)) {
+    if (JSON.stringify(items) !== JSON.stringify(itemsActual) || (mouseX != mouseXRender) || (mouseY != mouseYRender)) {
       forceHide = true;
       setTimeout(() => {
         itemsActual = items;
+        mouseXRender = mouseX;
+        mouseYRender = mouseY;
+
         forceHide = false;
       }, 200);
     }
@@ -47,14 +51,14 @@
 <div
   class="menu"
   style={`
-    ${rightLighter ? ("right: " + mouseX + "px;") : ("left: " + mouseX + "px;")}
-    top: ${mouseY}px;
+    ${rightLighter ? ("right: " + mouseXRender + "px;") : ("left: " + mouseXRender + "px;")}
+    top: ${mouseYRender}px;
     direction: ${rtl ? "rtl" : "ltr"};
     position: ${mode === "auto" ? "absolute" : "fixed"};
     opacity: ${open && !forceHide ? "1" : "0"};
     ${!open || forceHide ? "pointer-events: none;" : ""}
     ${open && !forceHide ? "transform: scale(1);" : ""}
-    max-height: ${windowHeight - mouseY}px;
+    max-height: ${windowHeight - mouseYRender}px;
   `}
   bind:clientWidth={selfWidth} bind:clientHeight={selfHeight}
   on:mouseenter={() => mouseOver = true} on:mouseleave={() => mouseOver = false}
