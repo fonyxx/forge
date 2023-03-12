@@ -99,6 +99,7 @@
                     rightLighter={rtl}
                     parentMenuSizeCount={parentMenuSizeCount + 1}
                     mouseY={-localVarsHeight[index]}
+                    mouseX={17}
                     bind:open={open}
                   />
                 </div>
@@ -175,7 +176,6 @@
 
           .arrow {
             .inner-self {
-              margin-left: 5px;
               pointer-events: none;
               opacity: 0;
               transition: 200ms;
