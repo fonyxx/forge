@@ -9,9 +9,9 @@
   let mouseX = 0, mouseY = 0, contextMenuSource: TitleBarMenuItem[] = [];
   let contextMenuMouseOver = false, menuOpen = false;
 
-  function contextMenuShowHandler(data: TitleBarMenuItem[]) {
-    contextMenuX = mouseX;
-    contextMenuY = mouseY;
+  function contextMenuShowHandler(data: TitleBarMenuItem[], y: number, x: number) {
+    contextMenuX = x ? x : mouseX;
+    contextMenuY = y ? y : mouseY;
 
     contextMenuSource = data;
     menuOpen = true;
@@ -142,7 +142,10 @@
   mouseX = e.clientX;
   mouseY = e.clientY;
 }} on:mousedown={() => {
-  if (!contextMenuMouseOver) menuOpen = false;
+  if (!contextMenuMouseOver) {
+    menuOpen = false;
+    window.windowEvents.emit("context-close");
+  }
 }}>
   <TitleBar queryNetwork={dropDown} mode={layoutMode} title="تشكيل" />
   <Menu

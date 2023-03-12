@@ -6,5 +6,6 @@ declare global {
     electron: ElectronAPI
     api: unknown
     comu: EventEmitter
+    windowEvents: EventEmitter
   }
 }

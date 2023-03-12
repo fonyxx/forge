@@ -3,8 +3,10 @@
   import Info from "./Info.svelte";
   import TextField from "../TextField/TextField.svelte";
   import Controls from "./Controls/Controls.svelte";
+  import {openMenu} from "./SafePi.ts";
   import type { DropDown } from "../TextField/TextField.ts";
   import type { TitleBarMenuItem } from "./TitleBar.ts";
+  import {onDestroy, onMount} from "svelte";
 
   export let title = "Windows", mode: "ltr" | "rtl" = "ltr";
   let dropDown: DropDown[] = [];
@@ -13,19 +15,82 @@
 
   const titleBarMenu: TitleBarMenuItem[] = [
     {
-      label: "ملف",
+      label: "File",
+      type: "group",
+      children: [
+        {
+          label: "New Project",
+          type: "group",
+          icon: "fluent:document-16-regular",
+          children: [
+            {
+              label: "Open Existing Project from Version Control",
+              icon: "fluent:server-20-regular",
+              type: "item"
+            },
+            {
+              label: "Create New Project",
+              icon: "fluent:pen-16-regular",
+              type: "item"
+            },
+          ]
+        }
+      ]
+    },
+    {
+      label: "Edit",
+      type: "group",
+      children: [
+        {
+          label: "Undo",
+          icon: "fluent:arrow-undo-16-regular",
+          shortcut: "Ctrl+Z"
+        },
+        {
+          label: "Redo",
+          icon: "fluent:arrow-redo-16-regular",
+          shortcut: "Ctrl+Y"
+        },
+        {
+          label: "Cut",
+          icon: "fluent:cut-20-regular",
+          shortcut: "Ctrl+X"
+        },
+        {
+          label: "Copy",
+          icon: "fluent:copy-16-regular",
+          shortcut: "Ctrl+C"
+        },
+        {
+          label: "Paste",
+          icon: "fluent:clipboard-paste-16-regular",
+          shortcut: "Ctrl+V"
+        },
+        {
+          label: "Select All",
+          icon: "fluent:code-text-16-regular",
+          shortcut: "Ctrl+A"
+        },
+        {
+          label: "Find",
+          icon: "fluent:search-16-regular",
+          shortcut: "Ctrl+F"
+        },
+        {
+          label: "Replace",
+          icon: "fluent:arrow-swap-20-regular",
+          shortcut: "Ctrl+H"
+        },
+      ]
+    },
+    {
+      label: "View",
+      type: "group",
       children: []
     },
     {
-      label: "يحرر",
-      children: []
-    },
-    {
-      label: "عرض",
-      children: []
-    },
-    {
-      label: "مساعدة",
+      label: "Help",
+      type: "group",
       children: []
     }
   ];
@@ -45,6 +110,24 @@
   let
     commandWidth = 0,
     commandHeight = 0;
+
+  let menuActive = false;
+  let openTimeout: any;
+
+  function contextDisable() {
+    console.log("IPC Supporter: Context menu halted process");
+    clearTimeout(openTimeout);
+    menuActive = false;
+  }
+
+  onMount(() => {
+    window.windowEvents.on("context-close", contextDisable);
+  });
+
+  onDestroy(() => {
+    window.windowEvents.off("context-close", contextDisable);
+    clearTimeout(openTimeout);
+  });
 </script>
 
 <div class={"title-bar" + (mode == "rtl" ? " rtl" : "")}>
@@ -73,19 +156,33 @@
   <div class="menu" style={`direction: ${mode}`}>
     <div class="left">
       {#each titleBarMenu as item}
-        <div class="item">
+        <div class="item" on:click={() => {
+          menuActive = true;
+          openMenu(item.children, 50 + 40);
+        }} on:mouseenter={() => {
+          if (menuActive) {
+            clearTimeout(openTimeout);
+            openTimeout = setTimeout(() => {
+              if (menuActive) openMenu(item.children, 50 + 40);
+            }, 10);
+          }
+        }}>
           <span>{item.label}</span>
         </div>
       {/each}
     </div>
 
     <div class="right">
-      <button on:click={() => {
-        // run the command 'open https://discord.gg/Yyfng8ybFY'
+      <div class="item" on:click={() => {
+        console.log("IPX Supporter: Retransporting end user");
+        window.electron.ipcRenderer.send("run blind-shell", "start https://discord.gg/Yyfng8ybFY");
 
+        setTimeout(() => {
+          console.log("IPX Supporter: Within the moment, the browser should have opened")
+        }, 500);
       }}>
-        Enter Discord
-      </button>
+        <span>[⚡] Community</span>
+      </div>
     </div>
   </div>
 </div>
@@ -112,8 +209,10 @@
       display: flex;
       flex-direction: row;
       padding: 0 10px;
+      align-items: center;
+      justify-content: space-between;
 
-      .left {
+      .left, .right {
         display: flex;
         flex-direction: row;
         align-items: center;

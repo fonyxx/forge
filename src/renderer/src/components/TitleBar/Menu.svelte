@@ -29,7 +29,6 @@
   let localVarsHeight: number[] = [];
   let localVarsWidth: number[] = [];
   let localItems: HTMLDivElement[] = [];
-
 </script>
 
 <div
@@ -40,29 +39,32 @@
     direction: ${rtl ? "rtl" : "ltr"};
     position: ${mode === "auto" ? "absolute" : "fixed"};
     opacity: ${open ? "1" : "0"};
-    ${!open ? "pointer-events: none" : ""}
-    ${open ? "transform: scale(1)" : ""}
+    ${!open ? "pointer-events: none;" : ""}
+    ${open ? "transform: scale(1);" : ""}
+    max-height: ${windowHeight - mouseY}px;
   `}
   bind:clientWidth={selfWidth} bind:clientHeight={selfHeight}
   on:mouseenter={() => mouseOver = true} on:mouseleave={() => mouseOver = false}
 >
-  {#each (Array.isArray(items) ? items : []) as item, index}
-    {#if item.type === "separator"}
-      <hr />
-    {:else}
-      <div
-        class="item"
-        bind:clientHeight={localVarsHeight[index]} bind:clientWidth={localVarsWidth[index]} bind:this={localItems[index]}
-        on:click={() => {
-          if (!item.type === "item") return;
-
-          open = false;
-          setTimeout(() => {
-            if (item.onClick) item.onClick();
-          }, 200);
+  <div class="inner">
+    {#each (Array.isArray(items) ? items : []) as item, index}
+      {#if item.type === "separator"}
+        <hr />
+      {:else}
+        <div
+          class="item"
+          bind:clientHeight={localVarsHeight[index]} bind:clientWidth={localVarsWidth[index]} bind:this={localItems[index]}
+          on:click={() => {
+          if (item.type != "item" && item.type != "group") {
+            open = false;
+            console.log("ELX Dispatcher Support");
+            setTimeout(() => {
+              if (item.onClick) item.onClick();
+            }, 200);
+          }
         }}
-      >
-        <div class="left">
+        >
+          <div class="left">
             <div class="icon">
               {#if item.icon}
                 <Icon icon={item.icon} />
@@ -72,40 +74,41 @@
             <span class="label">
             {item.label}
           </span>
-        </div>
+          </div>
 
-        <div class="right">
-          {#if item.type == "item"}
+          <div class="right">
             {#if item.shortcut}
+              {#if item.shortcut}
               <span class="shortcut">
                 {item.shortcut}
               </span>
-            {/if}
-          {:else}
-            <div class="arrow">
-              {#if !rtl}
-                <Icon icon="fluent:chevron-right-16-regular" />
-              {:else}
-                <Icon icon="fluent:chevron-left-16-regular" />
               {/if}
+            {:else if item.type == "group"}
+              <div class="arrow">
+                {#if !rtl}
+                  <Icon icon="fluent:chevron-right-16-regular" />
+                {:else}
+                  <Icon icon="fluent:chevron-left-16-regular" />
+                {/if}
 
-              <div class="inner-self">
-                <svelte:self
-                  items={item.children}
-                  mode="auto"
-                  rtl={rtl}
-                  rightLighter={rtl}
-                  parentMenuSizeCount={parentMenuSizeCount + 1}
-                  mouseY={-localVarsHeight[index]}
-                  open={true}
-                />
+                <div class="inner-self">
+                  <svelte:self
+                    items={item.children}
+                    mode="auto"
+                    rtl={rtl}
+                    rightLighter={rtl}
+                    parentMenuSizeCount={parentMenuSizeCount + 1}
+                    mouseY={-localVarsHeight[index]}
+                    bind:open={open}
+                  />
+                </div>
               </div>
-            </div>
-          {/if}
+            {/if}
+          </div>
         </div>
-      </div>
-    {/if}
-  {/each}
+      {/if}
+    {/each}
+  </div>
 </div>
 
 <style lang="scss">
@@ -124,80 +127,91 @@
     transform: scale(0.9);
     -webkit-app-region: no-drag;
 
-    hr {
-      width: 100%;
-      height: 1px;
-      background: $bdr;
-      border: none;
+    &::-webkit-scrollbar {
+      width: 3px;
     }
 
-    .item {
-      width: 100%;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 5px;
-      border-radius: 3px;
-      cursor: pointer;
-      transition: 200ms;
-      gap: 40px;
-      position: relative;
+    &::-webkit-scrollbar-track {
+      background: $d0;
+    }
 
-      .left .icon {
+    .inner {
+      hr {
+        width: 100%;
+        height: 1px;
+        background: $bdr;
+        border: none;
+      }
+
+      .item {
+        width: 100%;
+        height: 30px;
         display: flex;
         align-items: center;
-        justify-content: center;
-        height: 15px;
+        justify-content: space-between;
+        padding: 0 5px;
         border-radius: 3px;
-        width: 15px;
-        font-size: 20px;
-        overflow: hidden;
-      }
+        cursor: pointer;
+        transition: 200ms;
+        gap: 40px;
+        position: relative;
+        min-height: 30px;
 
-      .right {
-        .shortcut {
-          color: $f0;
+        .left .icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 15px;
+          border-radius: 3px;
+          width: 15px;
+          font-size: 16px;
+          overflow: hidden;
         }
-
-        .arrow {
-          .inner-self {
-            margin-left: 5px;
-            pointer-events: none;
-            opacity: 0;
-            transition: 200ms;
-            transition-delay: 0ms;
-            position: relative;
-            z-index: 1;
-            transform: scale(0.9);
-          }
-        }
-      }
-
-      &:hover {
-        background: $d0;
 
         .right {
+          .shortcut {
+            color: $f0;
+          }
+
           .arrow {
-            & > .inner-self {
-              opacity: 1;
-              pointer-events: all;
-              transition-delay: 400ms;
-              transform: scale(1);
+            .inner-self {
+              margin-left: 5px;
+              pointer-events: none;
+              opacity: 0;
+              transition: 200ms;
+              transition-delay: 0ms;
+              position: relative;
+              z-index: 1;
+              transform: scale(0.9);
             }
           }
         }
-      }
 
-      .left, .right {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        &:hover {
+          background: $d0;
 
-        .label {
-          font-size: 11px;
-          color: $f1;
-          white-space: nowrap;
+          .right {
+            .arrow {
+              & > .inner-self {
+                opacity: 1;
+                pointer-events: all;
+                transition-delay: 400ms;
+                transform: scale(1);
+              }
+            }
+          }
+        }
+
+        .left, .right {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+
+          .label {
+            font-size: 11px;
+            color: $f1;
+            white-space: nowrap;
+          }
         }
       }
     }
