@@ -156,14 +156,16 @@
   <div class="menu" style={`direction: ${mode}`}>
     <div class="left">
       {#each titleBarMenu as item}
-        <div class="item" on:click={() => {
+        <div class="item" on:click={(e) => {
           menuActive = true;
-          openMenu(item.children, 50 + 40);
-        }} on:mouseenter={() => {
+          const rect = e.target.getBoundingClientRect();
+          openMenu(item.children, 50 + 40, rect.left);
+        }} on:mouseenter={(e) => {
           if (menuActive) {
             clearTimeout(openTimeout);
             openTimeout = setTimeout(() => {
-              if (menuActive) openMenu(item.children, 50 + 40);
+              const rect = e.target.getBoundingClientRect();
+              if (menuActive) openMenu(item.children, 50 + 40, rect.left);
             }, 10);
           }
         }}>
