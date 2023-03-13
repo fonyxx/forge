@@ -72,7 +72,7 @@
           class="item"
           bind:clientHeight={localVarsHeight[index]} bind:clientWidth={localVarsWidth[index]} bind:this={localItems[index]}
           on:click={() => {
-          if (item.type != "item" && item.type != "group") {
+          if (item.type != "separator" && item.type != "group") {
             open = false;
             console.log("ELX Dispatcher Support");
             setTimeout(() => {

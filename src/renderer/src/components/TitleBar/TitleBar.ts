@@ -41,15 +41,21 @@ export interface ModalBodyCodeSlack {
   mode: string;
 }
 
+export interface ModalBodyHR {
+  type: "hr";
+}
+
 export interface ModalBodyFormSlack {
   type: "form";
   fields: {
     label: string;
-    mode: "text";
+    mode: "text" | "password";
     initialValue: string;
+    name: string;
+    placeholder: string;
     onChange: (value: string) => void;
-  }
-  onSubmit: () => void;
+  }[];
+  onSubmit: (formData: any) => void;
 }
 
-export type ModalBodySlack = ModalBodyButtonSlack | ModalBodyTextSlack | ModalBodyCodeSlack | ModalBodyFormSlack;
+export type ModalBodySlack = ModalBodyButtonSlack | ModalBodyTextSlack | ModalBodyCodeSlack | ModalBodyFormSlack | ModalBodyHR;

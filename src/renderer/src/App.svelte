@@ -5,6 +5,7 @@
   import Menu from "./components/TitleBar/Menu.svelte";
   import type {ModalBodySlack, TitleBarMenuItem} from "./components/TitleBar/TitleBar.ts";
   import Modal from "./components/TitleBar/Modal/Modal.svelte";
+  import { callModal } from "./components/TitleBar/SafeMx.ts"
 
   let contextMenuX = 0, contextMenuY = 0;
   let mouseX = 0, mouseY = 0, contextMenuSource: TitleBarMenuItem[] = [];
@@ -56,10 +57,30 @@
     {
       label: "About the program",
       value: "Information about the program",
-      // icon: "[icon] fluent:info-16-regular",
+      icon: "[icon] fluent:info-16-regular",
       onClick: () => {
-        console.log("About the program");
-        alert("Fonyx Forge - [2023+] - build 0.0.1");
+        callModal("About Fonyx Forge", true, [
+          {
+            type: "text",
+            value: "About Forge",
+            mode: "header"
+          },
+          {
+            type: "text",
+            value: "Forge is an integrated development environment for developing hardware, software, and firmware.",
+            mode: "paragraph"
+          },
+          {
+            type: "text",
+            value: "Build",
+            mode: "header"
+          },
+          {
+            type: "text",
+            value: "Version 0.0.1, Build: infinity",
+            mode: "paragraph"
+          }
+        ])
       },
       keywords: ["about", "info", "information", "version", "build", "program", "app", "application"]
     },
@@ -73,6 +94,14 @@
 
         oledMode = true;
         handleOledProcess();
+
+        callModal("OLED Optimisation Enabled", true, [
+          {
+            type: "text",
+            mode: "paragraph",
+            value: "The app is now optimised for OLED screens."
+          }
+        ]);
       },
       keywords: ["oled", "oled dark", "screen", "display"]
     },
@@ -86,6 +115,14 @@
 
         oledMode = false;
         handleOledProcess();
+
+        callModal("LCD Optimisation Enabled", true, [
+          {
+            type: "text",
+            mode: "paragraph",
+            value: "The app is now optimised for LCD screens."
+          }
+        ]);
       },
       keywords: ["lcd", "lcd dark", "screen", "display"]
     },
@@ -96,6 +133,14 @@
       onClick: () => {
         localStorage.setItem("layoutMode", "rtl");
         layoutMode = "rtl";
+
+        callModal("Right to Left Layout Enabled", true, [
+          {
+            type: "text",
+            mode: "paragraph",
+            value: "The app is now optimised for Arabic, Hebrew and Persian."
+          }
+        ]);
       },
       keywords: ["rtl", "right to left", "arabic", "hebrew", "persian", "language", "layout"]
     },
@@ -106,6 +151,14 @@
       onClick: () => {
         localStorage.setItem("layoutMode", "ltr");
         layoutMode = "ltr";
+
+        callModal("Left to Right Layout Enabled", true, [
+          {
+            type: "text",
+            mode: "paragraph",
+            value: "The app is now optimised for English, German, and Russian."
+          }
+        ]);
       },
       keywords: ["ltr", "left to right", "english", "german", "russian", "language", "layout"]
     },
@@ -136,7 +189,37 @@
         {
           label: "Open Project",
           icon: "fluent:folder-open-16-regular",
-          type: "item"
+          type: "item",
+          onClick: () => {
+            callModal("Select Folder to Open", true, [
+              {
+                type: "form",
+                fields: [
+                  {
+                    label: "Folder Path",
+                    placeholder: "C:/ForgeProjects/Default",
+                    mode: "text",
+                    name: "path"
+                  },
+                  {
+                    label: "Startup Commands",
+                    placeholder: "suppress autorun;",
+                    mode: "text",
+                    name: "command"
+                  }
+                ]
+              },
+              {
+                type: "buttons",
+                buttons: [
+                  {
+                    label: "Select Folder",
+                    type: "secondary"
+                  }
+                ]
+              }
+            ]);
+          }
         }
       ]
     },
@@ -209,7 +292,7 @@
 
   function handleOledProcess() {
     if (oledMode) {
-      document.documentElement.style.setProperty("--l1", "#101010");
+      document.documentElement.style.setProperty("--l1", "#191919");
       document.documentElement.style.setProperty("--d0", "rgba(255, 255, 255, 8%)");
       document.documentElement.style.setProperty("--d1", "rgba(255, 255, 255, 13%)");
     } else {
@@ -278,6 +361,9 @@
                 type: "text",
                 value: "Thanks for subscribing to my channel, i really appreciate it",
                 mode: "paragraph"
+              },
+              {
+                type: "hr"
               }
             ]);
           },
@@ -333,7 +419,7 @@
     items={contextMenuSource} mode="manual" rightLighter={layoutMode === "rtl"}
     mouseX={contextMenuX} mouseY={contextMenuY}
     position={layoutMode === "ltr" ? "right" : "left"} rtl={layoutMode === "rtl"}
-    bind:open={menuOpen} bind:mouseOver={contextMenuMouseOver} closable={modalClosable}
+    bind:open={menuOpen} bind:mouseOver={contextMenuMouseOver}
   />
 </div>
 

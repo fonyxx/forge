@@ -64,7 +64,7 @@
       <div class="footer">
         <Pan
           closable={closable}
-          pan={footer}
+          pan={footer} footer={true}
           on:close={() => {
             mouseOnModal = false;
             show = false;

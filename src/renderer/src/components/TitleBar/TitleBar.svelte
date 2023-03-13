@@ -7,6 +7,7 @@
   import type { DropDown } from "../TextField/TextField.ts";
   import type { TitleBarMenuItem } from "./TitleBar.ts";
   import {onDestroy, onMount} from "svelte";
+  import { callModal } from "./SafeMx.js"
 
   export let title = "Windows", mode: "ltr" | "rtl" = "ltr";
   let dropDown: DropDown[] = [];
@@ -103,6 +104,14 @@
       <div class="item" on:click={() => {
         console.log("IPX Supporter: Retransporting end user");
         window.electron.ipcRenderer.send("run blind-shell", "start https://discord.gg/Yyfng8ybFY");
+
+        callModal("Discord Server Invite", true, [
+          {
+            type: "text",
+            mode: "paragraph",
+            value: "In a moment, a browser window should open with the discord server invite."
+          }
+        ])
 
         setTimeout(() => {
           console.log("IPX Supporter: Within the moment, the browser should have opened")
