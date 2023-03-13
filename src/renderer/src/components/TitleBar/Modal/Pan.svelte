@@ -1,7 +1,10 @@
 <script lang="ts">
   import type {ModalBodySlack} from "../TitleBar.ts";
+  import {createEventDispatcher} from "svelte";
 
-  export let pan: ModalBodySlack[] = [];
+  export let pan: ModalBodySlack[] = [], closable = false;
+
+  const dispatch = createEventDispatcher();
 </script>
 
 <div class="pan">
@@ -17,6 +20,14 @@
 
     {:else if item.type === "buttons"}
       <div class="buttons">
+        {#if closable}
+          <button class="button" on:click={() => {
+            dispatch("close");
+          }}>
+            Close
+          </button>
+        {/if}
+
         {#each item.buttons as button}
           <button class={"button" + (" " + button.mode)} on:click={button.onClick}>
             {button.label}

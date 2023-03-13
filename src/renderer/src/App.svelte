@@ -271,14 +271,6 @@
       type: "buttons",
       buttons: [
         {
-          label: "Close",
-          onClick: () => {
-            showModal = false;
-            window.windowEvents.emit("modal-close");
-          },
-          mode: "secondary"
-        },
-        {
           label: "Subscribe",
           onClick: () => {
             window.windowEvents.emit("modal", "Thanks for Subscribing", true, [
@@ -316,6 +308,23 @@
     <button on:click={() => {
       window.windowEvents.emit("modal", "Textual Modal", true, modalTestBody, footerTest);
     }}>Show Modal</button>
+
+    <button on:click={() => {
+      window.windowEvents.emit("modal", "Thanks for Subscribing", true, [
+        {
+          type: "text",
+          value: "Thanks for subscribing to my channel, i really appreciate it",
+          mode: "paragraph"
+        }
+      ], [
+        {
+          type: "buttons",
+          buttons: []
+        }
+      ]);
+    }}>
+      Show Thankfull
+    </button>
   </div>
 
   <Modal

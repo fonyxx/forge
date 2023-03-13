@@ -60,12 +60,12 @@
       <Pan pan={bodyUser} />
     </div>
 
-    <div class="footer">
-      <Pan pan={[
-        ...(closable ? [...footerUser, {
-          mode: "button",
-          text: "Close",
-          onClick: () => {
+    {#if closable || footerUser.length > 0}
+      <div class="footer">
+        <Pan
+          closable={closable}
+          pan={footerUser}
+          on:close={() => {
             mouseOnModal = false;
             show = false;
             dispatch("miscCloseFire");
@@ -74,10 +74,10 @@
               footerUser = [];
               bodyUser = [];
             }, 200);
-          }
-        }] : footerUser)
-      ]} />
-    </div>
+          }}
+        />
+      </div>
+    {/if}
   </div>
 </div>
 
