@@ -10,7 +10,7 @@
   let contextMenuX = 0, contextMenuY = 0;
   let mouseX = 0, mouseY = 0, contextMenuSource: TitleBarMenuItem[] = [];
   let contextMenuMouseOver = false, menuOpen = false;
-  let modalClosable = false;
+  let modalClosable = false, dimMode = false;
 
   function contextMenuShowHandler(data: TitleBarMenuItem[], y: number, x: number) {
     contextMenuX = x ? x : mouseX;
@@ -93,6 +93,7 @@
         localStorage.setItem("oledMode", "true");
 
         oledMode = true;
+        dimMode = false;
         handleOledProcess();
 
         callModal("OLED Optimisation Enabled", true, [
@@ -114,6 +115,7 @@
         localStorage.setItem("oledMode", "false");
 
         oledMode = false;
+        dimMode = false;
         handleOledProcess();
 
         callModal("LCD Optimisation Enabled", true, [
@@ -125,6 +127,26 @@
         ]);
       },
       keywords: ["lcd", "lcd dark", "screen", "display"]
+    },
+    {
+      label: "Enable Dim LCD Mode",
+      value: "Update the style setup to optimise for LCD screens with a low brightness cap.",
+      icon: "[icon] fluent:brightness-medium-16-regular",
+      onClick: () => {
+        console.log("Enable Dim LCD mode");
+        localStorage.setItem("oledMode", "dim");
+
+        dimMode = true;
+        handleOledProcess();
+
+        callModal("Dim LCD Optimisation Enabled", true, [
+          {
+            type: "text",
+            mode: "paragraph",
+            value: "The app is now optimised for LCD screens with a low brightness cap."
+          }
+        ]);
+      },
     },
     {
       label: "Right to Left Layout",
@@ -218,6 +240,16 @@
                   }
                 ]
               }
+            ], [
+              {
+                type: "buttons",
+                buttons: [
+                  {
+                    label: "Open",
+                    mode: "primary"
+                  }
+                ]
+              }
             ]);
           }
         }
@@ -291,14 +323,18 @@
   let layoutMode = "rtl";
 
   function handleOledProcess() {
-    if (oledMode) {
-      document.documentElement.style.setProperty("--l1", "#191919");
+    if (oledMode && !dimMode) {
+      document.documentElement.style.setProperty("--l1", "#151515");
       document.documentElement.style.setProperty("--d0", "rgba(255, 255, 255, 8%)");
       document.documentElement.style.setProperty("--d1", "rgba(255, 255, 255, 13%)");
-    } else {
+    } else if (!oledMode && !dimMode) {
       document.documentElement.style.setProperty("--l1", "#090909");
       document.documentElement.style.setProperty("--d0", "rgba(255, 255, 255, 5%)");
       document.documentElement.style.setProperty("--d1", "rgba(255, 255, 255, 10%)");
+    } else if (dimMode) {
+      document.documentElement.style.setProperty("--l1", "#232323");
+      document.documentElement.style.setProperty("--d0", "rgba(255, 255, 255, 10%)");
+      document.documentElement.style.setProperty("--d1", "rgba(255, 255, 255, 15%)");
     }
   }
 
@@ -310,9 +346,19 @@
     const layoutModeRaw = localStorage.getItem("layoutMode");
 
     if (oledModeRaw)
-      oledMode = oledModeRaw === "true";
+      if (oledModeRaw === "true") {
+        oledMode = true;
+        dimMode = false;
+      } else if (oledModeRaw === "false") {
+        oledMode = false;
+        dimMode = false;
+      } else if (oledModeRaw === "dim") {
+        oledMode = false;
+        dimMode = true;
+      }
     else {
       oledMode = false;
+      dimMode = false;
       localStorage.setItem("oledMode", "false");
     }
 

@@ -129,12 +129,14 @@
     }
 
     .buttons {
+      gap: 10px;
       display: flex;
       flex-direction: row;
+      padding: 0 10px;
 
       .button {
         background: transparent;
-        border: none;
+        border: 1px solid $bdr;
         color: $f0;
         transition: 200ms;
         padding: 0 10px;
