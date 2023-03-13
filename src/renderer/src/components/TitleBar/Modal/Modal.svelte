@@ -103,6 +103,7 @@
       overflow: hidden;
       transition: transform 200ms, opacity 200ms;
       max-width: 800px;
+      max-height: calc(100vh - 50px - 40px - 20px);
 
       &.hide {
         opacity: 0;
@@ -113,7 +114,7 @@
       .header {
         background: $l0;
         padding: 0 10px;
-        height: 40px;
+        height: 50px;
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -150,6 +151,20 @@
 
       .body {
         padding: 10px;
+        overflow: auto;
+        max-height: calc(100vh - 50px - 40px - 20px - 40px - 60px);
+
+        &::-webkit-scrollbar {
+          width: 3px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: $l0;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: $d0;
+        }
       }
 
       .footer {

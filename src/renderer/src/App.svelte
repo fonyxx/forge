@@ -279,6 +279,11 @@
                 value: "Thanks for subscribing to my channel, i really appreciate it",
                 mode: "paragraph"
               }
+            ], [
+              {
+                type: "buttons",
+                buttons: []
+              }
             ]);
           },
           mode: "primary"
@@ -316,7 +321,8 @@
           value: "Thanks for subscribing to my channel, i really appreciate it",
           mode: "paragraph"
         }
-      ], [
+      ],
+      [
         {
           type: "buttons",
           buttons: []
