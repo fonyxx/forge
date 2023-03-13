@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Forge</title>
+    </head> 
+
+    <body>
+        <h1>Deh</h1>
+        <script>
+            const { ipcRenderer } = require("electron");
+            // const { alert_modal } = require("../server/route/alert.js");
+
+            ipcRenderer.invoke("alert/modal", [1, 2]).then((x) => {
+                alert(x);
+            });
+        </script>
+    </body>
+</html>
