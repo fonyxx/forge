@@ -261,7 +261,7 @@
     },
     {
       type: "text",
-      value: "https://static.vecteezy.com/system/resources/previews/009/827/525/original/new-youtube-logo-free-vector.jpg",
+      value: "https://cdn.discordapp.com/attachments/1075252791032950784/1084670657037598781/Frame_1_9.png",
       mode: "image"
     }
   ];
@@ -270,6 +270,14 @@
     {
       type: "buttons",
       buttons: [
+        {
+          label: "Close",
+          onClick: () => {
+            showModal = false;
+            window.windowEvents.emit("modal-close");
+          },
+          mode: "secondary"
+        },
         {
           label: "Subscribe",
           onClick: () => {
@@ -281,16 +289,8 @@
               }
             ]);
           },
-          type: "primary"
+          mode: "primary"
         },
-        {
-          label: "Close",
-          onClick: () => {
-            showModal = false;
-            window.windowEvents.emit("modal-close");
-          },
-          type: "secondary"
-        }
       ]
     }
   ]
@@ -312,9 +312,11 @@
 }}>
   <TitleBar queryNetwork={dropDown} mode={layoutMode} title="تشكيل" titleBarMenu={titleBarMenu} />
 
-  <button on:click={() => {
-    window.windowEvents.emit("modal", "Textual Modal", true, modalTestBody, footerTest);
-  }}>Show Modal</button>
+  <div class="body">
+    <button on:click={() => {
+      window.windowEvents.emit("modal", "Textual Modal", true, modalTestBody, footerTest);
+    }}>Show Modal</button>
+  </div>
 
   <Modal
     bind:show={showModal} body={modalBody} footer={modalFooter} closable={modalClosable}
@@ -338,5 +340,27 @@
     background: $l1;
     height: 100vh;
     width: 100vw;
+
+    button {
+      background: transparent;
+      border: none;
+      color: $f0;
+      transition: 200ms;
+      padding: 0 10px;
+      height: 30px;
+      border-radius: 3px;
+
+      &:hover {
+        background: $d0;
+        cursor: pointer;
+        color: $f1;
+      }
+    }
+
+    .body {
+      padding: 10px;
+      display: flex;
+      flex-direction: row;
+    }
   }
 </style>

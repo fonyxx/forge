@@ -54,33 +54,30 @@
   >
     <div class="header">
       <span>{title}</span>
-
-      {#if closable}
-        <button
-          on:click={() => {
-            showU = false;
-            dispatch("miscCloseFire");
-
-            setTimeout(() => {
-              footerUser = [];
-              bodyUser = [];
-            }, 200);
-          }}
-        >
-          <Icon icon="fluent:dismiss-16-regular" />
-        </button>
-      {/if}
     </div>
 
     <div class="body">
       <Pan pan={bodyUser} />
     </div>
 
-    {#if footerUser.length > 0}
-      <div class="footer">
-        <Pan pan={footerUser} />
-      </div>
-    {/if}
+    <div class="footer">
+      <Pan pan={[
+        ...(closable ? [...footerUser, {
+          mode: "button",
+          text: "Close",
+          onClick: () => {
+            mouseOnModal = false;
+            show = false;
+            dispatch("miscCloseFire");
+
+            setTimeout(() => {
+              footerUser = [];
+              bodyUser = [];
+            }, 200);
+          }
+        }] : footerUser)
+      ]} />
+    </div>
   </div>
 </div>
 
@@ -99,8 +96,6 @@
     justify-content: center;
 
     .modal-frame {
-      min-width: 400px;
-      min-height: 200px;
       background: $l1;
       border-radius: 6px;
       border: 1px solid $bdr;
@@ -155,6 +150,12 @@
 
       .body {
         padding: 10px;
+      }
+
+      .footer {
+        background: $l0;
+        padding: 10px;
+        min-height: 30px;
       }
     }
 

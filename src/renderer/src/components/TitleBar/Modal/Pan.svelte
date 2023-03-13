@@ -18,7 +18,7 @@
     {:else if item.type === "buttons"}
       <div class="buttons">
         {#each item.buttons as button}
-          <button class="button" on:click={button.onClick}>
+          <button class={"button" + (" " + button.mode)} on:click={button.onClick}>
             {button.label}
           </button>
         {/each}
@@ -51,6 +51,42 @@
       font-size: 13px;
       margin: 0;
       color: $f1;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+
+      .button {
+        background: transparent;
+        border: none;
+        color: $f0;
+        transition: 200ms;
+        padding: 0 10px;
+        height: 30px;
+        border-radius: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &.primary {
+          background: $c1;
+          color: $l0;
+        }
+
+        &:hover {
+          background: $d0;
+          cursor: pointer;
+          color: $f1;
+
+          &.primary {
+            background: $c1;
+            color: $l0;
+            opacity: 0.6;
+          }
+        }
+      }
     }
   }
 </style>
