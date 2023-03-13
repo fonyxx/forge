@@ -12,94 +12,7 @@
   let dropDown: DropDown[] = [];
 
   export let queryNetwork: DropDown[] = [];
-
-  const titleBarMenu: TitleBarMenuItem[] = [
-    {
-      label: "File",
-      type: "group",
-      children: [
-        {
-          label: "New Project",
-          type: "group",
-          icon: "fluent:document-16-regular",
-          children: [
-            {
-              label: "Open Existing Project from Version Control",
-              icon: "fluent:server-20-regular",
-              type: "item"
-            },
-            {
-              label: "Create New Project",
-              icon: "fluent:pen-16-regular",
-              type: "item"
-            },
-          ]
-        }
-      ]
-    },
-    {
-      label: "Edit",
-      type: "group",
-      children: [
-        {
-          label: "Undo",
-          icon: "fluent:arrow-undo-16-regular",
-          shortcut: "Ctrl+Z"
-        },
-        {
-          label: "Redo",
-          icon: "fluent:arrow-redo-16-regular",
-          shortcut: "Ctrl+Y"
-        },
-        {
-          type: "separator"
-        },
-        {
-          label: "Cut",
-          icon: "fluent:cut-20-regular",
-          shortcut: "Ctrl+X"
-        },
-        {
-          label: "Copy",
-          icon: "fluent:copy-16-regular",
-          shortcut: "Ctrl+C"
-        },
-        {
-          label: "Paste",
-          icon: "fluent:clipboard-paste-16-regular",
-          shortcut: "Ctrl+V"
-        },
-        {
-          type: "separator"
-        },
-        {
-          label: "Select All",
-          icon: "fluent:code-text-16-regular",
-          shortcut: "Ctrl+A"
-        },
-        {
-          label: "Find",
-          icon: "fluent:search-16-regular",
-          shortcut: "Ctrl+F"
-        },
-        {
-          label: "Replace",
-          icon: "fluent:arrow-swap-20-regular",
-          shortcut: "Ctrl+H"
-        },
-      ]
-    },
-    {
-      label: "View",
-      type: "group",
-      children: []
-    },
-    {
-      label: "Help",
-      type: "group",
-      children: []
-    }
-  ];
+  export let titleBarMenu: TitleBarMenuItem[] = [];
 
   let query = "";
   const maxResults = 20;
@@ -169,7 +82,7 @@
             currentActiveMenu = item.label;
             menuActive = true;
             const rect = e.target.getBoundingClientRect();
-            openMenu(item.children, 50 + 40, mode === "rtl" ? rect.right : rect.left);
+            openMenu(item.children, 50 + 40, mode === "rtl" ? (rect.right ?? 0) : (rect.left ?? 0));
           }
         }} on:mouseenter={(e) => {
           if (menuActive) {
@@ -177,7 +90,7 @@
             clearTimeout(openTimeout);
             openTimeout = setTimeout(() => {
               const rect = e.target.getBoundingClientRect();
-              if (menuActive) openMenu(item.children, 50 + 40, mode === "rtl" ? rect.right : rect.left);
+              if (menuActive) openMenu(item.children, 50 + 40, mode === "rtl" ? (rect.right ?? 0) : (rect.left ?? 0));
             }, 10);
           }
         }}>

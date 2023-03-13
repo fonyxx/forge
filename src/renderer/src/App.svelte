@@ -3,11 +3,13 @@
   import {onDestroy, onMount} from "svelte";
   import type { DropDown } from "./components/TextField/TextField.ts";
   import Menu from "./components/TitleBar/Menu.svelte";
-  import type {TitleBarMenuItem} from "./components/TitleBar/TitleBar.ts";
+  import type {ModalBodySlack, TitleBarMenuItem} from "./components/TitleBar/TitleBar.ts";
+  import Modal from "./components/TitleBar/Modal/Modal.svelte";
 
   let contextMenuX = 0, contextMenuY = 0;
   let mouseX = 0, mouseY = 0, contextMenuSource: TitleBarMenuItem[] = [];
   let contextMenuMouseOver = false, menuOpen = false;
+  let modalClosable = false;
 
   function contextMenuShowHandler(data: TitleBarMenuItem[], y: number, x: number) {
     contextMenuX = x ? x : mouseX;
@@ -15,6 +17,19 @@
 
     contextMenuSource = data;
     menuOpen = true;
+  }
+
+  let
+    showModal = false, mouseOnModal = false, modalTitle = "Err",
+    modalBody: ModalBodySlack[] = [], modalFooter: ModalBodySlack[] = [];
+
+  function modalHandler(title: string, modalClosableX = true, data: ModalBodySlack[], footer: ModalBodySlack[] = []) {
+    modalBody = data;
+    modalFooter = footer;
+    modalTitle = title;
+    modalClosable = modalClosableX;
+
+    showModal = true;
   }
 
   const dropDown: DropDown[] = [
@@ -96,6 +111,99 @@
     },
   ];
 
+  const titleBarMenu: TitleBarMenuItem[] = [
+    {
+      label: "File",
+      type: "group",
+      children: [
+        {
+          label: "New Project",
+          type: "group",
+          icon: "fluent:document-16-regular",
+          children: [
+            {
+              label: "Open Existing Project from Version Control",
+              icon: "fluent:server-20-regular",
+              type: "item"
+            },
+            {
+              label: "Create New Project",
+              icon: "fluent:pen-16-regular",
+              type: "item"
+            },
+          ]
+        },
+        {
+          label: "Open Project",
+          icon: "fluent:folder-open-16-regular",
+          type: "item"
+        }
+      ]
+    },
+    {
+      label: "Edit",
+      type: "group",
+      children: [
+        {
+          label: "Undo",
+          icon: "fluent:arrow-undo-16-regular",
+          shortcut: "Ctrl+Z"
+        },
+        {
+          label: "Redo",
+          icon: "fluent:arrow-redo-16-regular",
+          shortcut: "Ctrl+Y"
+        },
+        {
+          type: "separator"
+        },
+        {
+          label: "Cut",
+          icon: "fluent:cut-20-regular",
+          shortcut: "Ctrl+X"
+        },
+        {
+          label: "Copy",
+          icon: "fluent:copy-16-regular",
+          shortcut: "Ctrl+C"
+        },
+        {
+          label: "Paste",
+          icon: "fluent:clipboard-paste-16-regular",
+          shortcut: "Ctrl+V"
+        },
+        {
+          type: "separator"
+        },
+        {
+          label: "Select All",
+          icon: "fluent:code-text-16-regular",
+          shortcut: "Ctrl+A"
+        },
+        {
+          label: "Find",
+          icon: "fluent:search-16-regular",
+          shortcut: "Ctrl+F"
+        },
+        {
+          label: "Replace",
+          icon: "fluent:arrow-swap-20-regular",
+          shortcut: "Ctrl+H"
+        },
+      ]
+    },
+    {
+      label: "View",
+      type: "group",
+      children: []
+    },
+    {
+      label: "Help",
+      type: "group",
+      children: []
+    }
+  ];
+
   let oledMode = false;
   let layoutMode = "rtl";
 
@@ -113,6 +221,8 @@
 
   onMount(() => {
     window.comu.on("show", contextMenuShowHandler);
+    window.windowEvents.on("modal", modalHandler);
+
     const oledModeRaw = localStorage.getItem("oledMode");
     const layoutModeRaw = localStorage.getItem("layoutMode");
 
@@ -135,7 +245,55 @@
 
   onDestroy(() => {
     window.comu.off("show", contextMenuShowHandler);
+    window.windowEvents.off("modal", modalHandler);
   });
+
+  const modalTestBody: ModalBodySlack[] = [
+    {
+      type: "text",
+      mode: "header",
+      value: "That Fire Channel"
+    },
+    {
+      type: "text",
+      value: "Hey guys welcome to my epic channel or something i dont even know",
+      mode: "paragraph"
+    },
+    {
+      type: "text",
+      value: "https://static.vecteezy.com/system/resources/previews/009/827/525/original/new-youtube-logo-free-vector.jpg",
+      mode: "image"
+    }
+  ];
+
+  const footerTest: ModalBodySlack[] = [
+    {
+      type: "buttons",
+      buttons: [
+        {
+          label: "Subscribe",
+          onClick: () => {
+            window.windowEvents.emit("modal", "Thanks for Subscribing", true, [
+              {
+                type: "text",
+                value: "Thanks for subscribing to my channel, i really appreciate it",
+                mode: "paragraph"
+              }
+            ]);
+          },
+          type: "primary"
+        },
+        {
+          label: "Close",
+          onClick: () => {
+            showModal = false;
+            window.windowEvents.emit("modal-close");
+          },
+          type: "secondary"
+        }
+      ]
+    }
+  ]
 </script>
 
 <div class="app" on:mousemove={e => {
@@ -146,13 +304,30 @@
     menuOpen = false;
     window.windowEvents.emit("context-close");
   }
+
+  if (!mouseOnModal && modalClosable && showModal) {
+    showModal = false;
+    window.windowEvents.emit("modal-close");
+  }
 }}>
-  <TitleBar queryNetwork={dropDown} mode={layoutMode} title="تشكيل" />
+  <TitleBar queryNetwork={dropDown} mode={layoutMode} title="تشكيل" titleBarMenu={titleBarMenu} />
+
+  <button on:click={() => {
+    window.windowEvents.emit("modal", "Textual Modal", true, modalTestBody, footerTest);
+  }}>Show Modal</button>
+
+  <Modal
+    bind:show={showModal} body={modalBody} footer={modalFooter} closable={modalClosable}
+    bind:mouseOnModal={mouseOnModal} title={modalTitle} on:miscCloseFire={() => {
+      window.windowEvents.emit("modal-close");
+    }}
+  />
+
   <Menu
     items={contextMenuSource} mode="manual" rightLighter={layoutMode === "rtl"}
     mouseX={contextMenuX} mouseY={contextMenuY}
     position={layoutMode === "ltr" ? "right" : "left"} rtl={layoutMode === "rtl"}
-    bind:open={menuOpen} bind:mouseOver={contextMenuMouseOver}
+    bind:open={menuOpen} bind:mouseOver={contextMenuMouseOver} closable={modalClosable}
   />
 </div>
 
