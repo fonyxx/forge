@@ -64,7 +64,7 @@
       <div class="footer">
         <Pan
           closable={closable}
-          pan={footerUser}
+          pan={footer}
           on:close={() => {
             mouseOnModal = false;
             show = false;
@@ -73,6 +73,9 @@
             setTimeout(() => {
               footerUser = [];
               bodyUser = [];
+
+              footer = [];
+              body = [];
             }, 200);
           }}
         />

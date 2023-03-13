@@ -1,13 +1,43 @@
 <script lang="ts">
   import type {ModalBodySlack} from "../TitleBar.ts";
-  import {createEventDispatcher} from "svelte";
+  import {createEventDispatcher, onMount} from "svelte";
 
   export let pan: ModalBodySlack[] = [], closable = false;
+  let fbl = false;
 
   const dispatch = createEventDispatcher();
+
+  $: {
+    pan.forEach((slack) => {
+      if (slack.type === "buttons") {
+        fbl = true;
+      }
+    });
+  }
+
+  onMount(() => {
+    pan.forEach((slack) => {
+      if (slack.type === "buttons") {
+        fbl = true;
+      }
+    });
+  });
 </script>
 
 <div class="pan">
+  {#if closable && !fbl}
+    <div class="buttons">
+      <button class="button" on:click={() => {
+            dispatch("close");
+          }}>
+        Close
+      </button>
+    </div>
+  {/if}
+
+  {closable} FBL: {fbl}
+  RCB: {closable && !fbl}
+
   {#each pan as item}
     {#if item.type === "text"}
       {#if item.mode === "header"}

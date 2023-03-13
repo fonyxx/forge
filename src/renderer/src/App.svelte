@@ -279,11 +279,6 @@
                 value: "Thanks for subscribing to my channel, i really appreciate it",
                 mode: "paragraph"
               }
-            ], [
-              {
-                type: "buttons",
-                buttons: []
-              }
             ]);
           },
           mode: "primary"
@@ -318,14 +313,8 @@
       window.windowEvents.emit("modal", "Thanks for Subscribing", true, [
         {
           type: "text",
-          value: "Thanks for subscribing to my channel, i really appreciate it",
+          value: "Thanks for subscribing to my channel, i really appreciate it... FUCK",
           mode: "paragraph"
-        }
-      ],
-      [
-        {
-          type: "buttons",
-          buttons: []
         }
       ]);
     }}>
@@ -334,7 +323,7 @@
   </div>
 
   <Modal
-    bind:show={showModal} body={modalBody} footer={modalFooter} closable={modalClosable}
+    bind:show={showModal} bind:body={modalBody} bind:footer={modalFooter} closable={modalClosable}
     bind:mouseOnModal={mouseOnModal} title={modalTitle} on:miscCloseFire={() => {
       window.windowEvents.emit("modal-close");
     }}
